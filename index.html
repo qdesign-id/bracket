@@ -1,0 +1,1414 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FF Tournament Bracket</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Bebas+Neue&family=Exo+2:ital,wght@0,400;0,700;0,900;1,900&display=swap');
+
+:root {
+  --bg-main: #0d0e12;
+  --bg-panel: #16191f;
+  --bg-card: #1c2028;
+  --bg-card2: #222732;
+  --gold: #f5a623;
+  --gold2: #ffd166;
+  --red: #e03030;
+  --border-glow: #f5a62355;
+  --border-dim: #2e3340;
+  --text: #f0f2f8;
+  --text2: #8a93ab;
+  --win-glow: #f5a62322;
+  --connector: #f5a62388;
+  --section-label: #f5a623;
+  --card-r: 6px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg-main);
+  font-family: 'Exo 2', 'Rajdhani', sans-serif;
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ─── HEADER ─── */
+.site-header {
+  background: linear-gradient(180deg, #12141a 0%, #0d0e12 100%);
+  border-bottom: 1px solid var(--border-dim);
+  padding: 0 20px;
+  height: 56px;
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 200;
+}
+
+.logo-wrap { display: flex; align-items: center; gap: 10px; }
+.logo-flame {
+  width: 36px; height: 36px;
+  background: linear-gradient(135deg, #ff4400, #f5a623);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+  box-shadow: 0 0 14px #f5a62366;
+}
+.logo-text {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 22px; letter-spacing: 3px;
+  color: var(--text);
+}
+.logo-text span { color: var(--gold); }
+
+.header-btns { display: flex; gap: 8px; }
+.hbtn {
+  padding: 7px 16px; border-radius: 6px; border: none; cursor: pointer;
+  font-family: 'Exo 2', sans-serif; font-size: 13px; font-weight: 700;
+  letter-spacing: 0.5px; transition: all .15s;
+}
+.hbtn-ghost { background: transparent; color: var(--text2); border: 1px solid var(--border-dim); }
+.hbtn-ghost:hover { border-color: var(--gold); color: var(--gold); }
+.hbtn-gold { background: var(--gold); color: #000; }
+.hbtn-gold:hover { background: var(--gold2); box-shadow: 0 0 12px var(--border-glow); }
+
+/* ─── TABS ─── */
+.tabs {
+  background: #12141a; border-bottom: 1px solid var(--border-dim);
+  display: flex; padding: 0 20px; gap: 2px;
+}
+.tab {
+  padding: 11px 18px; cursor: pointer;
+  font-size: 13px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;
+  color: var(--text2); border-bottom: 2px solid transparent; transition: all .15s;
+}
+.tab:hover { color: var(--text); }
+.tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+/* ─── PAGES ─── */
+.page { display: none; }
+.page.active { display: block; }
+
+/* ─── BRACKET PAGE ─── */
+.bracket-page {
+  padding: 0;
+  min-height: calc(100vh - 100px);
+}
+
+/* ─── TOURNAMENT BANNER ─── */
+.tour-banner {
+  background: linear-gradient(135deg, #1a1c24 0%, #12141a 100%);
+  border-bottom: 1px solid var(--border-dim);
+  padding: 18px 24px;
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  flex-wrap: wrap;
+}
+
+.tour-banner-left { display: flex; align-items: center; gap: 14px; }
+
+.tour-emblem {
+  width: 52px; height: 52px;
+  background: linear-gradient(135deg, #1e2230, #2a2f3e);
+  border: 2px solid var(--gold);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px;
+  box-shadow: 0 0 20px var(--border-glow);
+  flex-shrink: 0;
+}
+
+.tour-labels { display: flex; flex-direction: column; gap: 2px; }
+.tour-season {
+  font-size: 11px; text-transform: uppercase; letter-spacing: 2px;
+  color: var(--gold); font-weight: 700;
+}
+.tour-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 28px; letter-spacing: 2px; line-height: 1;
+}
+.tour-subtitle {
+  font-size: 12px; color: var(--text2); letter-spacing: 1px; text-transform: uppercase; margin-top: 2px;
+}
+
+.tour-banner-right { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.champion-ribbon {
+  display: none;
+  background: linear-gradient(135deg, #2a2000, #1a1500);
+  border: 1px solid var(--gold);
+  border-radius: 8px; padding: 10px 18px;
+  align-items: center; gap: 12px;
+  box-shadow: 0 0 20px #f5a62333;
+}
+.champion-ribbon.show { display: flex; }
+.cr-crown { font-size: 28px; }
+.cr-lbl { font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: var(--gold); }
+.cr-name { font-family: 'Bebas Neue', sans-serif; font-size: 22px; color: var(--gold2); letter-spacing: 1px; }
+
+/* ─── BRACKET WRAPPER ─── */
+.bracket-outer {
+  padding: 24px 20px 40px;
+  overflow-x: auto;
+  background:
+    radial-gradient(ellipse at 20% 20%, #f5a62308 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 80%, #e0303008 0%, transparent 60%),
+    var(--bg-main);
+}
+
+.bracket-wrapper { min-width: 900px; }
+
+/* ─── SECTION LABELS ─── */
+.section-lbl {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 10px;
+}
+.section-lbl-bar {
+  width: 4px; height: 18px; border-radius: 2px;
+  background: linear-gradient(180deg, var(--gold), var(--red));
+}
+.section-lbl-text {
+  font-size: 11px; text-transform: uppercase; letter-spacing: 2px;
+  color: var(--gold); font-weight: 700;
+}
+.section-lbl-badge {
+  background: #1c2028; border: 1px solid var(--border-dim);
+  border-radius: 4px; padding: 2px 8px;
+  font-size: 10px; color: var(--text2); font-weight: 700; letter-spacing: 1px;
+}
+
+/* ─── BRACKET GRID ─── */
+.bracket-grid {
+  display: grid;
+  grid-template-columns: auto;
+  position: relative;
+}
+
+/* Upper bracket */
+.upper-section { margin-bottom: 32px; }
+.upper-rounds {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  position: relative;
+}
+
+/* Lower bracket */
+.lower-section {}
+.lower-rounds {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  position: relative;
+}
+
+/* ─── ROUND COLUMN ─── */
+.round-col {
+  display: flex; flex-direction: column;
+  padding: 0 8px;
+}
+
+.round-header {
+  text-align: center; padding: 6px 0; margin-bottom: 8px;
+  border-bottom: 1px solid var(--border-dim);
+}
+.round-name {
+  font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: var(--text2); font-weight: 700;
+}
+.round-format {
+  font-size: 10px; color: var(--gold); margin-top: 2px;
+}
+
+.round-matches {
+  display: flex; flex-direction: column;
+  gap: 0;
+  flex: 1;
+}
+
+/* ─── MATCH SLOT ─── */
+.match-wrap {
+  display: flex; align-items: center;
+  flex: 1; min-height: 80px;
+  position: relative;
+}
+
+/* Connector lines - right side going to next round */
+.match-wrap.has-connector::after {
+  content: '';
+  position: absolute;
+  right: -8px; top: 50%;
+  width: 8px; height: 1px;
+  background: var(--connector);
+}
+
+/* Vertical connector on right side of first/last match going to next */
+.connector-v {
+  position: absolute;
+  right: -8px;
+  width: 1px;
+  background: var(--connector);
+  pointer-events: none;
+}
+
+.match-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-dim);
+  border-radius: var(--card-r);
+  overflow: hidden;
+  width: 100%;
+  cursor: pointer;
+  transition: border-color .15s, box-shadow .15s;
+  position: relative;
+}
+.match-card:hover {
+  border-color: var(--gold);
+  box-shadow: 0 0 14px var(--border-glow);
+}
+.match-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0;
+  width: 2px; height: 100%;
+  background: linear-gradient(180deg, var(--gold), transparent);
+  opacity: 0;
+  transition: opacity .15s;
+}
+.match-card:hover::before { opacity: 1; }
+
+/* Team row */
+.match-team {
+  display: flex; align-items: center;
+  padding: 9px 10px;
+  gap: 8px;
+  transition: background .15s;
+  min-height: 38px;
+}
+.match-team + .match-team { border-top: 1px solid var(--border-dim); }
+
+.match-team.is-winner {
+  background: linear-gradient(90deg, #f5a62314 0%, transparent 100%);
+}
+.match-team.is-loser { opacity: 0.38; }
+.match-team.tbd { opacity: 0.4; }
+
+.team-avatar {
+  width: 22px; height: 22px; border-radius: 4px;
+  background: linear-gradient(135deg, #2a2f3e, #1c2028);
+  border: 1px solid var(--border-dim);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; color: var(--gold);
+  flex-shrink: 0; text-transform: uppercase;
+  font-family: 'Bebas Neue', sans-serif;
+  letter-spacing: 0.5px;
+}
+.team-avatar.gold-av {
+  background: linear-gradient(135deg, #2a1e00, #3a2800);
+  border-color: var(--gold);
+  color: var(--gold);
+  box-shadow: 0 0 6px var(--border-glow);
+}
+
+.team-name-txt {
+  flex: 1;
+  font-size: 13px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.match-team.is-winner .team-name-txt { color: var(--text); }
+.match-team.tbd .team-name-txt { color: var(--text2); font-style: italic; font-weight: 400; text-transform: none; }
+
+.team-score {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 18px; letter-spacing: 1px;
+  min-width: 20px; text-align: center;
+  color: var(--text2);
+}
+.team-score.win-sc { color: var(--gold); text-shadow: 0 0 8px var(--border-glow); }
+.team-score.lose-sc { color: #444; }
+
+.match-footer {
+  background: #12141a;
+  border-top: 1px solid var(--border-dim);
+  padding: 3px 10px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.match-id-txt { font-size: 9px; color: #44505e; letter-spacing: 1px; text-transform: uppercase; }
+.match-status { font-size: 9px; letter-spacing: 1px; text-transform: uppercase; }
+.match-status.done { color: #22c55e; }
+.match-status.pending { color: var(--text2); }
+
+/* ─── DIVIDER between upper & lower ─── */
+.bracket-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border-dim), var(--border-dim), transparent);
+  margin: 0 0 24px;
+  position: relative;
+}
+.bracket-divider::after {
+  content: 'LOWER BRACKET';
+  position: absolute; top: -9px; left: 50%; transform: translateX(-50%);
+  background: var(--bg-main);
+  padding: 0 14px;
+  font-size: 9px; color: var(--text2); letter-spacing: 2px; font-weight: 700;
+}
+
+/* ─── SVG CONNECTOR OVERLAY ─── */
+.bracket-svg {
+  position: absolute; top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  overflow: visible;
+}
+
+/* ─── GRAND FINAL block ─── */
+.gf-block {
+  margin-top: 24px;
+  display: flex; justify-content: center; align-items: flex-start; gap: 24px;
+  flex-wrap: wrap;
+}
+.gf-col { text-align: center; }
+
+/* ─── EMPTY / DASHBOARD ─── */
+.dash-page { padding: 28px 20px; max-width: 1200px; margin: 0 auto; }
+.dash-stats {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 14px; margin-bottom: 28px;
+}
+.stat-c {
+  background: var(--bg-panel); border: 1px solid var(--border-dim);
+  border-radius: 8px; padding: 18px;
+  position: relative; overflow: hidden;
+}
+.stat-c::before {
+  content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 100%;
+  background: var(--gold);
+}
+.stat-lbl { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--text2); margin-bottom: 6px; }
+.stat-val { font-family: 'Bebas Neue', sans-serif; font-size: 36px; color: var(--gold); letter-spacing: 1px; }
+.stat-sub { font-size: 12px; color: var(--text2); margin-top: 2px; }
+
+.sec-ttl {
+  font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 2px;
+  margin-bottom: 14px; display: flex; align-items: center; gap: 12px; color: var(--text);
+}
+.sec-ttl::after { content: ''; flex: 1; height: 1px; background: var(--border-dim); }
+
+.tour-list { display: flex; flex-direction: column; gap: 10px; }
+
+.t-card {
+  background: var(--bg-panel); border: 1px solid var(--border-dim);
+  border-radius: 8px; padding: 16px 18px;
+  display: flex; align-items: center; gap: 14px;
+  cursor: pointer; transition: all .15s;
+}
+.t-card:hover { border-color: var(--gold); background: var(--bg-card); }
+.t-icon {
+  width: 44px; height: 44px; border-radius: 8px; flex-shrink: 0;
+  background: linear-gradient(135deg, #1a1e00, #2a2800);
+  border: 1px solid #3a3800;
+  display: flex; align-items: center; justify-content: center; font-size: 20px;
+}
+.t-info { flex: 1; }
+.t-name { font-size: 15px; font-weight: 700; margin-bottom: 3px; }
+.t-meta { font-size: 12px; color: var(--text2); display: flex; gap: 12px; flex-wrap: wrap; }
+.t-actions { display: flex; gap: 6px; }
+
+.badge-pill {
+  padding: 3px 9px; border-radius: 20px; font-size: 10px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;
+}
+.badge-active { background: #0d2a15; color: #22c55e; border: 1px solid #1a4a28; }
+.badge-done { background: #2a1e00; color: var(--gold); border: 1px solid #4a3800; }
+
+.empty-box { text-align: center; padding: 60px 20px; color: var(--text2); }
+.empty-ico { font-size: 48px; margin-bottom: 14px; }
+.empty-ttl { font-family: 'Bebas Neue', sans-serif; font-size: 24px; color: var(--text); margin-bottom: 8px; letter-spacing: 1px; }
+.empty-desc { font-size: 13px; margin-bottom: 22px; }
+
+/* ─── CREATE PAGE ─── */
+.create-page { padding: 28px 20px; max-width: 700px; margin: 0 auto; }
+.form-box {
+  background: var(--bg-panel); border: 1px solid var(--border-dim);
+  border-radius: 10px; padding: 24px;
+}
+.f-row { margin-bottom: 18px; }
+.f-lbl { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--text2); font-weight: 700; margin-bottom: 7px; }
+.f-in, .f-sel, .f-ta {
+  width: 100%; background: var(--bg-card); border: 1px solid var(--border-dim);
+  border-radius: 6px; color: var(--text); font-family: 'Exo 2', sans-serif; font-size: 14px;
+  padding: 10px 13px; outline: none; transition: border-color .15s;
+}
+.f-in:focus, .f-sel:focus { border-color: var(--gold); }
+.f-sel option { background: var(--bg-card); }
+.f-hint { font-size: 11px; color: var(--text2); margin-top: 5px; }
+
+.teams-g {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
+  gap: 8px; margin-bottom: 10px;
+}
+.t-inp-wrap {
+  display: flex; align-items: center; gap: 6px;
+  background: var(--bg-card); border: 1px solid var(--border-dim);
+  border-radius: 6px; padding: 8px 10px;
+}
+.t-num { color: var(--gold); font-weight: 700; font-size: 12px; min-width: 20px; font-family: 'Bebas Neue', sans-serif; font-size: 14px; }
+.t-inp-wrap input {
+  background: transparent; border: none; outline: none;
+  color: var(--text); font-family: 'Exo 2', sans-serif; font-size: 13px; flex: 1; min-width: 0;
+}
+
+/* ─── LAYOUT PAGE ─── */
+.layout-page { padding: 28px 20px; max-width: 1100px; margin: 0 auto; }
+.layout-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 14px; margin-bottom: 24px; }
+.set-card { background: var(--bg-panel); border: 1px solid var(--border-dim); border-radius: 10px; padding: 20px; }
+.set-ttl { font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text2); font-weight: 700; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid var(--border-dim); }
+.color-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+.cp { width: 30px; height: 30px; border-radius: 6px; cursor: pointer; border: 2px solid transparent; transition: all .15s; }
+.cp.on, .cp:hover { border-color: #fff; transform: scale(1.1); }
+.toggle-r { display: flex; align-items: center; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid var(--border-dim); }
+.toggle-r:last-child { border-bottom: none; }
+.tgl-lbl { font-size: 13px; }
+.tgl-sub { font-size: 11px; color: var(--text2); }
+.tgl { width: 38px; height: 20px; background: var(--bg-card); border-radius: 10px; position: relative; cursor: pointer; border: 1px solid var(--border-dim); transition: background .2s; flex-shrink: 0; }
+.tgl.on { background: var(--gold); border-color: var(--gold); }
+.tgl::after { content: ''; position: absolute; top: 2px; left: 2px; width: 14px; height: 14px; background: #fff; border-radius: 50%; transition: left .2s; }
+.tgl.on::after { left: 20px; }
+
+/* ─── MODAL ─── */
+.modal-bg {
+  position: fixed; inset: 0; background: rgba(0,0,0,.8); backdrop-filter: blur(6px);
+  z-index: 1000; display: none; align-items: center; justify-content: center; padding: 20px;
+}
+.modal-bg.open { display: flex; }
+.modal-box {
+  background: var(--bg-panel); border: 1px solid var(--border-dim);
+  border-radius: 12px; width: 100%; max-width: 420px;
+  overflow: hidden; animation: upIn .18s ease;
+  box-shadow: 0 0 40px rgba(0,0,0,.6);
+}
+@keyframes upIn { from { transform: translateY(16px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+.modal-h { padding: 18px 22px; border-bottom: 1px solid var(--border-dim); display: flex; align-items: center; justify-content: space-between; }
+.modal-ttl { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 1px; color: var(--gold); }
+.modal-x { background: none; border: none; color: var(--text2); font-size: 22px; cursor: pointer; line-height: 1; padding: 2px 6px; border-radius: 4px; }
+.modal-x:hover { background: var(--bg-card); color: var(--text); }
+.modal-b { padding: 22px; }
+.modal-f { padding: 14px 22px; border-top: 1px solid var(--border-dim); display: flex; gap: 8px; justify-content: flex-end; }
+
+.score-row { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+.score-team { flex: 1; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+.score-in {
+  width: 60px; background: var(--bg-card); border: 1px solid var(--border-dim);
+  border-radius: 6px; color: var(--gold); font-family: 'Bebas Neue', sans-serif;
+  font-size: 26px; text-align: center; padding: 6px; outline: none;
+}
+.score-in:focus { border-color: var(--gold); }
+
+.modal-hint {
+  background: var(--bg-card); border-radius: 6px; border: 1px solid var(--border-dim);
+  padding: 10px 12px; font-size: 12px; color: var(--text2); margin-top: 10px;
+}
+
+/* ─── TOAST ─── */
+.toast {
+  position: fixed; bottom: 22px; right: 22px;
+  background: var(--bg-panel); border: 1px solid var(--border-dim);
+  border-left: 3px solid #22c55e;
+  border-radius: 7px; padding: 12px 18px;
+  font-size: 13px; font-weight: 600; z-index: 9999;
+  opacity: 0; transform: translateY(8px); transition: all .2s;
+  pointer-events: none;
+}
+.toast.show { opacity: 1; transform: translateY(0); }
+
+/* ─── BRACKET LAYOUT (CSS Grid approach) ─── */
+.b-layout {
+  display: flex; gap: 0; position: relative;
+}
+
+.b-col {
+  display: flex; flex-direction: column;
+  padding: 0 6px; flex: 1;
+}
+
+.b-col-hdr {
+  text-align: center; margin-bottom: 8px; padding: 6px;
+  border-bottom: 1px solid #2a2f3e;
+}
+.b-col-hdr .rn { font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: var(--text2); font-weight: 700; }
+.b-col-hdr .rf { font-size: 10px; color: var(--gold); margin-top: 2px; }
+
+.b-matches {
+  display: flex; flex-direction: column; flex: 1;
+}
+
+.b-slot {
+  display: flex; flex-direction: column; justify-content: center;
+  flex: 1; padding: 6px 0; position: relative; min-height: 90px;
+}
+
+/* ─── RESPONSIVE ─── */
+@media(max-width:640px){
+  .site-header { padding: 0 12px; }
+  .bracket-outer { padding: 14px 10px 30px; }
+  .b-col { padding: 0 3px; }
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="site-header">
+  <div class="logo-wrap">
+    <div class="logo-flame">🔥</div>
+    <div class="logo-text" id="app-logo-txt">FF <span>BRACKET</span></div>
+  </div>
+  <div class="header-btns">
+    <button class="hbtn hbtn-ghost" onclick="goPage('layout')">⚙ Layout</button>
+    <button class="hbtn hbtn-gold" onclick="goPage('create')">+ Tournament</button>
+  </div>
+</header>
+
+<!-- TABS -->
+<nav class="tabs">
+  <div class="tab active" data-pg="dashboard" onclick="goPage('dashboard')">Dashboard</div>
+  <div class="tab" data-pg="bracket" onclick="goPage('bracket')">Bracket</div>
+  <div class="tab" data-pg="layout" onclick="goPage('layout')">Layout</div>
+</nav>
+
+<!-- ════ PAGE: DASHBOARD ════ -->
+<div class="page active dash-page" id="pg-dashboard">
+  <div class="dash-stats">
+    <div class="stat-c"><div class="stat-lbl">Tournament</div><div class="stat-val" id="s-total">0</div><div class="stat-sub">Total semua</div></div>
+    <div class="stat-c" style="--gold:#22c55e"><div class="stat-lbl">Aktif</div><div class="stat-val" id="s-active" style="color:#22c55e">0</div><div class="stat-sub">Sedang berjalan</div></div>
+    <div class="stat-c"><div class="stat-lbl">Total Tim</div><div class="stat-val" id="s-teams">0</div><div class="stat-sub">Semua tournament</div></div>
+    <div class="stat-c"><div class="stat-lbl">Selesai</div><div class="stat-val" id="s-done" style="color:#8a93ab">0</div><div class="stat-sub">Rampung</div></div>
+  </div>
+  <div class="sec-ttl">Tournament</div>
+  <div class="tour-list" id="tour-list-el"></div>
+</div>
+
+<!-- ════ PAGE: BRACKET ════ -->
+<div class="page bracket-page" id="pg-bracket">
+  <div id="bk-empty" class="empty-box" style="padding-top:80px">
+    <div class="empty-ico">📊</div>
+    <div class="empty-ttl">Belum ada tournament dipilih</div>
+    <div class="empty-desc">Pilih atau buat tournament dari Dashboard</div>
+    <button class="hbtn hbtn-gold" onclick="goPage('dashboard')">Ke Dashboard</button>
+  </div>
+  <div id="bk-content" style="display:none">
+    <div class="tour-banner">
+      <div class="tour-banner-left">
+        <div class="tour-emblem">🏆</div>
+        <div class="tour-labels">
+          <div class="tour-season" id="bk-season">FREE FIRE CHAMPIONSHIP</div>
+          <div class="tour-title" id="bk-title">TOURNAMENT NAME</div>
+          <div class="tour-subtitle" id="bk-subtitle">KNOCKOUT STAGE</div>
+        </div>
+      </div>
+      <div class="tour-banner-right">
+        <div class="champion-ribbon" id="champ-ribbon">
+          <div class="cr-crown">👑</div>
+          <div><div class="cr-lbl">Juara</div><div class="cr-name" id="champ-name-el">-</div></div>
+        </div>
+        <button class="hbtn hbtn-ghost" onclick="randomizeCurrent()">🔀 Acak</button>
+        <button class="hbtn hbtn-ghost" onclick="resetCurrent()">↺ Reset</button>
+        <button class="hbtn" style="background:transparent;color:#e03030;border:1px solid #3d1515;font-family:Exo 2;font-size:12px;font-weight:700;padding:7px 14px;border-radius:6px;cursor:pointer" onclick="deleteCurrent()">🗑 Hapus</button>
+      </div>
+    </div>
+    <div class="bracket-outer">
+      <div id="bk-render" class="bracket-wrapper"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ PAGE: CREATE ════ -->
+<div class="page create-page" id="pg-create">
+  <div class="sec-ttl">Buat Tournament Baru</div>
+  <div class="form-box">
+    <div class="f-row">
+      <label class="f-lbl">Nama Tournament</label>
+      <input class="f-in" id="f-name" placeholder="Contoh: FF CUP SEASON 3" />
+    </div>
+    <div class="f-row">
+      <label class="f-lbl">Format Bracket</label>
+      <select class="f-sel" id="f-fmt" onchange="fmtChange()">
+        <option value="single">Single Elimination</option>
+        <option value="double">Double Elimination</option>
+        <option value="roundrobin">Round Robin</option>
+      </select>
+    </div>
+    <div class="f-row">
+      <label class="f-lbl">Jumlah Tim</label>
+      <select class="f-sel" id="f-size" onchange="sizeChange()">
+        <option value="4">4 Tim</option>
+        <option value="8" selected>8 Tim</option>
+        <option value="16">16 Tim</option>
+      </select>
+    </div>
+    <div class="f-row">
+      <label class="f-lbl">Nama Tim</label>
+      <div class="teams-g" id="teams-g-el"></div>
+      <div class="f-hint">💡 Isi nama semua tim peserta</div>
+    </div>
+    <div class="f-row">
+      <label class="f-lbl">Tanggal (Opsional)</label>
+      <input class="f-in" id="f-date" type="date" />
+    </div>
+    <div style="display:flex;gap:10px;margin-top:6px">
+      <button class="hbtn hbtn-gold" onclick="createTour()">🚀 Buat Bracket</button>
+      <button class="hbtn hbtn-ghost" onclick="goPage('dashboard')">Batal</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════ PAGE: LAYOUT ════ -->
+<div class="page layout-page" id="pg-layout">
+  <div class="sec-ttl">Pengaturan Layout & Tampilan</div>
+  <div class="layout-grid">
+    <div class="set-card">
+      <div class="set-ttl">🎨 Warna Aksen</div>
+      <div class="color-row" id="cp-row">
+        <div class="cp on" style="background:#f5a623" data-c="#f5a623" onclick="setAcc('#f5a623',this)"></div>
+        <div class="cp" style="background:#e03030" data-c="#e03030" onclick="setAcc('#e03030',this)"></div>
+        <div class="cp" style="background:#22c55e" data-c="#22c55e" onclick="setAcc('#22c55e',this)"></div>
+        <div class="cp" style="background:#3b82f6" data-c="#3b82f6" onclick="setAcc('#3b82f6',this)"></div>
+        <div class="cp" style="background:#a855f7" data-c="#a855f7" onclick="setAcc('#a855f7',this)"></div>
+        <div class="cp" style="background:#14b8a6" data-c="#14b8a6" onclick="setAcc('#14b8a6',this)"></div>
+        <div class="cp" style="background:#ffd700" data-c="#ffd700" onclick="setAcc('#ffd700',this)"></div>
+        <div class="cp" style="background:#ec4899" data-c="#ec4899" onclick="setAcc('#ec4899',this)"></div>
+      </div>
+      <label class="f-lbl" style="margin-bottom:6px">Custom</label>
+      <input type="color" id="cc-in" value="#f5a623" style="width:100%;height:36px;background:var(--bg-card);border:1px solid var(--border-dim);border-radius:6px;cursor:pointer" onchange="setAcc(this.value,null)" />
+    </div>
+
+    <div class="set-card">
+      <div class="set-ttl">🏷 Branding</div>
+      <div class="f-row"><label class="f-lbl">Nama App</label><input class="f-in" id="brnd-name" value="FF BRACKET" /></div>
+      <div class="f-row"><label class="f-lbl">Tagline</label><input class="f-in" id="brnd-tag" value="KNOCKOUT STAGE" /></div>
+      <button class="hbtn hbtn-gold" style="font-size:13px;padding:8px 16px" onclick="saveBrand()">Simpan</button>
+    </div>
+
+    <div class="set-card">
+      <div class="set-ttl">⚙ Preferensi</div>
+      <div class="toggle-r">
+        <div><div class="tgl-lbl">Konfirmasi hapus</div><div class="tgl-sub">Tanya sebelum hapus</div></div>
+        <div class="tgl on" id="tgl-confirm" onclick="tglP('confirm',this)"></div>
+      </div>
+      <div class="toggle-r">
+        <div><div class="tgl-lbl">Auto-advance winner</div><div class="tgl-sub">Otomatis isi ronde berikut</div></div>
+        <div class="tgl on" id="tgl-auto" onclick="tglP('auto',this)"></div>
+      </div>
+    </div>
+
+    <div class="set-card">
+      <div class="set-ttl">💾 Data</div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <button class="hbtn hbtn-ghost" onclick="exportD()">📤 Export JSON</button>
+        <button class="hbtn hbtn-ghost" onclick="document.getElementById('imp-in').click()">📥 Import JSON</button>
+        <input type="file" id="imp-in" accept=".json" style="display:none" onchange="importD(event)" />
+        <button class="hbtn" style="background:transparent;color:#e03030;border:1px solid #3d1515;font-family:Exo 2;font-size:13px;font-weight:700;padding:8px 16px;border-radius:6px;cursor:pointer" onclick="clearAll()">🗑 Hapus Semua</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ MATCH MODAL ════ -->
+<div class="modal-bg" id="match-modal">
+  <div class="modal-box">
+    <div class="modal-h">
+      <div class="modal-ttl">EDIT SKOR MATCH</div>
+      <button class="modal-x" onclick="closeModal()">×</button>
+    </div>
+    <div class="modal-b">
+      <div class="score-row">
+        <div class="score-team" id="mt1-name">Tim 1</div>
+        <input type="number" class="score-in" id="ms1" min="0" max="99" value="0" />
+      </div>
+      <div class="score-row">
+        <div class="score-team" id="mt2-name">Tim 2</div>
+        <input type="number" class="score-in" id="ms2" min="0" max="99" value="0" />
+      </div>
+      <div class="modal-hint">💡 Masukkan skor lalu klik Simpan. Winner otomatis naik ke ronde berikutnya.</div>
+    </div>
+    <div class="modal-f">
+      <button class="hbtn hbtn-ghost" onclick="closeModal()">Batal</button>
+      <button class="hbtn hbtn-gold" onclick="saveMatch()">💾 Simpan Hasil</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast-el"></div>
+
+<script>
+/* ════════════════════════════════════
+   STATE
+════════════════════════════════════ */
+let S = {
+  tours: [],
+  curId: null,
+  acc: '#f5a623',
+  appName: 'FF BRACKET',
+  tag: 'KNOCKOUT STAGE',
+  prefs: { confirm: true, auto: true }
+};
+
+let editMid = null;
+
+/* ════════════════════════════════════
+   STORAGE
+════════════════════════════════════ */
+function sv() { localStorage.setItem('ffbk3', JSON.stringify(S)); }
+function ld() {
+  const d = localStorage.getItem('ffbk3');
+  if (d) { try { S = { ...S, ...JSON.parse(d) }; } catch(e){} }
+  applyAcc();
+  applyBrand();
+}
+
+/* ════════════════════════════════════
+   NAVIGATION
+════════════════════════════════════ */
+function goPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('pg-' + name).classList.add('active');
+  const tab = document.querySelector(`[data-pg="${name}"]`);
+  if (tab) tab.classList.add('active');
+  if (name === 'dashboard') renderDash();
+  if (name === 'bracket') renderBk();
+  if (name === 'create') initCreate();
+  if (name === 'layout') initLayout();
+}
+
+/* ════════════════════════════════════
+   DASHBOARD
+════════════════════════════════════ */
+function renderDash() {
+  document.getElementById('s-total').textContent = S.tours.length;
+  document.getElementById('s-active').textContent = S.tours.filter(t=>t.status==='active').length;
+  document.getElementById('s-teams').textContent = S.tours.reduce((a,t)=>a+t.teams.length, 0);
+  document.getElementById('s-done').textContent = S.tours.filter(t=>t.status==='done').length;
+
+  const el = document.getElementById('tour-list-el');
+  if (!S.tours.length) {
+    el.innerHTML = `<div class="empty-box"><div class="empty-ico">🏆</div><div class="empty-ttl">BELUM ADA TOURNAMENT</div><div class="empty-desc">Buat tournament pertama kamu!</div><button class="hbtn hbtn-gold" onclick="goPage('create')">Buat Tournament</button></div>`;
+    return;
+  }
+  const fmtLabel = {single:'Single Elimination',double:'Double Elimination',roundrobin:'Round Robin'};
+  el.innerHTML = S.tours.map(t => {
+    const badge = t.status==='done'
+      ? `<span class="badge-pill badge-done">👑 Selesai</span>`
+      : `<span class="badge-pill badge-active">● Aktif</span>`;
+    return `<div class="t-card" onclick="openTour('${t.id}')">
+      <div class="t-icon">🔥</div>
+      <div class="t-info">
+        <div class="t-name">${t.name}</div>
+        <div class="t-meta">
+          <span>${fmtLabel[t.fmt]||t.fmt}</span>
+          <span>👥 ${t.teams.length} tim</span>
+          ${t.date?`<span>📅 ${t.date}`:''}
+          ${t.champion?`<span style="color:var(--gold)">👑 ${t.champion}</span>`:''}
+        </div>
+      </div>
+      <div class="t-actions">${badge}<button class="hbtn hbtn-ghost" style="font-size:12px;padding:6px 12px" onclick="event.stopPropagation();openTour('${t.id}')">Buka →</button></div>
+    </div>`;
+  }).join('');
+}
+
+/* ════════════════════════════════════
+   CREATE
+════════════════════════════════════ */
+function initCreate() { sizeChange(); }
+function fmtChange() { sizeChange(); }
+function sizeChange() {
+  const n = parseInt(document.getElementById('f-size').value);
+  const g = document.getElementById('teams-g-el');
+  g.innerHTML = Array.from({length:n},(_,i)=>
+    `<div class="t-inp-wrap"><span class="t-num">${i+1}</span><input type="text" placeholder="Tim ${i+1}" /></div>`
+  ).join('');
+}
+
+function createTour() {
+  const name = document.getElementById('f-name').value.trim();
+  if (!name) { toast('❌ Isi nama tournament!','err'); return; }
+  const fmt = document.getElementById('f-fmt').value;
+  const size = parseInt(document.getElementById('f-size').value);
+  const date = document.getElementById('f-date').value;
+  const fields = document.querySelectorAll('#teams-g-el input');
+  const teams = Array.from(fields).map((f,i)=>({
+    id:'t'+(i+1), name: f.value.trim()||`TEAM ${i+1}`,
+    w:0, l:0, m:0, pts:0
+  }));
+
+  const id = 'tr_'+Date.now();
+  const tour = {
+    id, name, fmt, date, status:'active', champion:null,
+    teams: shuffle([...teams]), matches: [],
+    createdAt: new Date().toISOString()
+  };
+
+  if (fmt==='single') tour.matches = mkSingle(tour.teams, id);
+  else if (fmt==='double') tour.matches = mkDouble(tour.teams, id);
+  else tour.matches = mkRR(tour.teams, id);
+
+  S.tours.push(tour);
+  S.curId = id;
+  sv();
+  toast('✅ Tournament berhasil dibuat!');
+  setTimeout(()=>openTour(id), 250);
+}
+
+/* ════════════════════════════════════
+   BUILDERS
+════════════════════════════════════ */
+function mkSingle(teams, tid) {
+  const ms = [];
+  let cur = [...teams], round = 1, mn = 1;
+  while (cur.length > 1) {
+    const nxt = [];
+    for (let i=0; i<cur.length; i+=2) {
+      if (i+1 < cur.length) {
+        ms.push({ id:`${tid}_r${round}_m${mn++}`, round, type:'W', t1:cur[i], t2:cur[i+1], s1:null,s2:null,win:null,done:false });
+        nxt.push(null);
+      } else nxt.push(cur[i]);
+    }
+    cur=nxt; round++; mn=1;
+  }
+  return ms;
+}
+
+function mkDouble(teams, tid) {
+  const ms = [];
+  const sh = shuffle([...teams]);
+  let mn = 1;
+  const wb1 = [];
+  // WB Round 1
+  for (let i=0;i<sh.length;i+=2) {
+    if (i+1<sh.length) {
+      const m = {id:`${tid}_W1_m${mn++}`,round:1,type:'W',bracket:'W',t1:sh[i],t2:sh[i+1],s1:null,s2:null,win:null,done:false};
+      ms.push(m); wb1.push(m);
+    }
+  }
+  // WB Round 2
+  let mn2=1; const wb2=[];
+  for (let i=0;i<wb1.length;i+=2) {
+    if (wb1[i+1]) {
+      const m={id:`${tid}_W2_m${mn2++}`,round:2,type:'W',bracket:'W',t1:null,t2:null,s1:null,s2:null,win:null,done:false,feedFrom:[wb1[i].id,wb1[i+1].id]};
+      ms.push(m); wb2.push(m);
+    }
+  }
+  // LB Round 1
+  let mnL=1; const lb1=[];
+  for (let i=0;i<wb1.length;i+=2) {
+    if (wb1[i+1]) {
+      const m={id:`${tid}_L1_m${mnL++}`,round:1,type:'L',bracket:'L',t1:null,t2:null,s1:null,s2:null,win:null,done:false};
+      ms.push(m); lb1.push(m);
+    }
+  }
+  // LB Round 2
+  for (let i=0;i<lb1.length;i+=2) {
+    if (lb1[i+1]) {
+      const m={id:`${tid}_L2_m${i/2+1}`,round:2,type:'L',bracket:'L',t1:null,t2:null,s1:null,s2:null,win:null,done:false};
+      ms.push(m);
+    }
+  }
+  // Grand Final
+  ms.push({id:`${tid}_GF`,round:99,type:'GF',bracket:'GF',t1:null,t2:null,s1:null,s2:null,win:null,done:false});
+  return ms;
+}
+
+function mkRR(teams, tid) {
+  const ms=[]; let mn=1;
+  for (let i=0;i<teams.length;i++) {
+    for (let j=i+1;j<teams.length;j++) {
+      ms.push({id:`${tid}_rr_m${mn++}`,round:Math.ceil(mn/teams.length),type:'RR',
+        t1:teams[i],t2:teams[j],s1:null,s2:null,win:null,done:false});
+    }
+  }
+  return ms;
+}
+
+/* ════════════════════════════════════
+   OPEN / RENDER
+════════════════════════════════════ */
+function openTour(id) {
+  S.curId = id; sv();
+  goPage('bracket');
+}
+
+function getCur() { return S.tours.find(t=>t.id===S.curId)||null; }
+
+function renderBk() {
+  const T = getCur();
+  const empty = document.getElementById('bk-empty');
+  const content = document.getElementById('bk-content');
+  if (!T) { empty.style.display='block'; content.style.display='none'; return; }
+  empty.style.display='none'; content.style.display='block';
+
+  document.getElementById('bk-title').textContent = T.name;
+  document.getElementById('bk-subtitle').textContent = {single:'KNOCKOUT STAGE',double:'DOUBLE ELIM STAGE',roundrobin:'ROUND ROBIN STAGE'}[T.fmt]||'';
+  document.getElementById('bk-season').textContent = 'FREE FIRE CHAMPIONSHIP';
+
+  // Champion
+  const cr = document.getElementById('champ-ribbon');
+  if (T.champion) { cr.classList.add('show'); document.getElementById('champ-name-el').textContent = T.champion; }
+  else cr.classList.remove('show');
+
+  const render = document.getElementById('bk-render');
+  if (T.fmt==='roundrobin') renderRR(T, render);
+  else renderElim(T, render);
+}
+
+/* ── ELIMINATION BRACKET RENDER ── */
+function renderElim(T, el) {
+  const rounds = [...new Set(T.matches.map(m=>m.round))].sort((a,b)=>a-b);
+  const totalRounds = rounds.length;
+
+  // Labels
+  const rLabel = (r, i) => {
+    const ri = rounds.indexOf(r);
+    const fromEnd = totalRounds - 1 - ri;
+    if (fromEnd===0) return 'GRAND FINAL';
+    if (fromEnd===1) return 'SEMI FINAL';
+    if (fromEnd===2) return 'QUARTER FINAL';
+    return `ROUND ${r}`;
+  };
+  const formats = ['BO1','BO3','BO3','BO5','BO5'];
+
+  let html = `<div style="position:relative">`;
+
+  // Upper section label
+  if (T.fmt==='double') {
+    html += `<div class="section-lbl" style="margin-bottom:12px">
+      <div class="section-lbl-bar"></div>
+      <div class="section-lbl-text">UPPER BRACKET</div>
+    </div>`;
+  }
+
+  html += `<div class="b-layout" id="bk-stage-upper">`;
+
+  for (let ri=0; ri<rounds.length; ri++) {
+    const r = rounds[ri];
+    const rMs = T.matches.filter(m=>m.round===r && m.type==='W');
+    if (!rMs.length) continue;
+    const lbl = rLabel(r, ri);
+    const fmt = ri >= formats.length ? 'BO5' : formats[ri];
+    const matchCount = rMs.length;
+    // Each slot height scales so bigger rounds have more space
+    const slotH = Math.max(90, 90 * Math.pow(2, ri));
+
+    html += `<div class="b-col">
+      <div class="b-col-hdr"><div class="rn">${lbl}</div><div class="rf">${fmt}</div></div>
+      <div class="b-matches">`;
+
+    for (let mi=0; mi<rMs.length; mi++) {
+      const m = rMs[mi];
+      html += `<div class="b-slot" style="min-height:${slotH}px">
+        ${matchCard(m)}
+      </div>`;
+      // Add connector line to right (if not last round)
+      if (ri < rounds.length-1) {
+        // We'll do connectors via SVG below
+      }
+    }
+
+    html += `</div></div>`;
+  }
+
+  html += `</div>`; // b-layout
+
+  // Lower bracket for double elim
+  if (T.fmt==='double') {
+    const lbRounds = [...new Set(T.matches.filter(m=>m.type==='L').map(m=>m.round))].sort((a,b)=>a-b);
+    if (lbRounds.length) {
+      html += `<div class="bracket-divider" style="margin:28px 0 20px"></div>`;
+      html += `<div class="section-lbl" style="margin-bottom:12px">
+        <div class="section-lbl-bar" style="background:linear-gradient(180deg,var(--red),var(--gold))"></div>
+        <div class="section-lbl-text" style="color:var(--red)">LOWER BRACKET</div>
+      </div>`;
+      html += `<div class="b-layout">`;
+      for (let ri=0; ri<lbRounds.length; ri++) {
+        const r = lbRounds[ri];
+        const rMs = T.matches.filter(m=>m.round===r && m.type==='L');
+        if (!rMs.length) continue;
+        const lbl = ri===lbRounds.length-1 ? 'LB FINAL' : ri===lbRounds.length-2 ? 'LB SF' : `LB ROUND ${r}`;
+        const slotH = Math.max(90, 90 * Math.pow(2, ri));
+        html += `<div class="b-col">
+          <div class="b-col-hdr"><div class="rn">${lbl}</div><div class="rf">BO5</div></div>
+          <div class="b-matches">`;
+        for (const m of rMs) {
+          html += `<div class="b-slot" style="min-height:${slotH}px">${matchCard(m)}</div>`;
+        }
+        html += `</div></div>`;
+      }
+      html += `</div>`;
+    }
+
+    // Grand Final
+    const gf = T.matches.find(m=>m.type==='GF');
+    if (gf) {
+      html += `<div style="margin-top:28px">
+        <div class="section-lbl" style="margin-bottom:12px">
+          <div class="section-lbl-bar" style="background:linear-gradient(180deg,var(--gold),#ffd700)"></div>
+          <div class="section-lbl-text" style="color:var(--gold2)">GRAND FINAL</div>
+          <div class="section-lbl-badge">BO7</div>
+        </div>
+        <div style="max-width:240px">${matchCard(gf)}</div>
+      </div>`;
+    }
+  }
+
+  html += `</div>`;
+  el.innerHTML = html;
+
+  // Draw SVG connector lines
+  setTimeout(() => drawConnectors(T, el), 50);
+}
+
+/* ── MATCH CARD HTML ── */
+function matchCard(m) {
+  const t1 = m.t1, t2 = m.t2;
+  const w1 = m.win && m.win === t1?.id;
+  const w2 = m.win && m.win === t2?.id;
+
+  function teamRow(team, score, isWin, isLose) {
+    if (!team) return `<div class="match-team tbd"><div class="team-avatar">?</div><div class="team-name-txt">TBD</div><div class="team-score">-</div></div>`;
+    const cls = isWin ? 'is-winner' : (isLose ? 'is-loser' : '');
+    const avCls = isWin ? 'gold-av' : '';
+    const sCls = isWin ? 'win-sc' : (isLose ? 'lose-sc' : '');
+    return `<div class="match-team ${cls}">
+      <div class="team-avatar ${avCls}">${team.name.substring(0,2)}</div>
+      <div class="team-name-txt">${team.name}</div>
+      <div class="team-score ${sCls}">${score !== null ? score : '-'}</div>
+    </div>`;
+  }
+
+  const statusTxt = m.done ? '<span class="match-status done">✔ SELESAI</span>' : '<span class="match-status pending">⏳ MENUNGGU</span>';
+
+  return `<div class="match-card" onclick="openMModal('${m.id}')">
+    ${teamRow(t1, m.s1, w1, m.done&&!w1)}
+    ${teamRow(t2, m.s2, w2, m.done&&!w2)}
+    <div class="match-footer"><span class="match-id-txt">${m.id.split('_').slice(-2).join(' ')}</span>${statusTxt}</div>
+  </div>`;
+}
+
+/* ── SVG CONNECTORS ── */
+function drawConnectors(T, container) {
+  // Remove old SVG overlays
+  container.querySelectorAll('.conn-svg').forEach(s=>s.remove());
+
+  const rounds = [...new Set(T.matches.filter(m=>m.type==='W').map(m=>m.round))].sort((a,b)=>a-b);
+  const cols = container.querySelectorAll('#bk-stage-upper .b-col');
+  if (cols.length < 2) return;
+
+  const containerRect = container.getBoundingClientRect();
+  const scrollLeft = container.parentElement?.scrollLeft || 0;
+
+  const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
+  svg.setAttribute('class','conn-svg');
+  svg.style.cssText = `position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:visible`;
+  container.style.position = 'relative';
+  container.appendChild(svg);
+
+  for (let ri=0; ri<rounds.length-1; ri++) {
+    const r = rounds[ri];
+    const rNext = rounds[ri+1];
+    const rMs = T.matches.filter(m=>m.round===r && m.type==='W');
+    const rMsNext = T.matches.filter(m=>m.round===rNext && m.type==='W');
+
+    for (let i=0; i<rMs.length; i+=2) {
+      if (!rMs[i+1]) continue;
+      const nextIdx = Math.floor(i/2);
+      if (!rMsNext[nextIdx]) continue;
+
+      // Get elements
+      const allCards = container.querySelectorAll('.match-card');
+      // Use data-mid approach
+      const el1 = container.querySelector(`[data-mid="${rMs[i].id}"]`);
+      const el2 = container.querySelector(`[data-mid="${rMs[i+1].id}"]`);
+      const elN = container.querySelector(`[data-mid="${rMsNext[nextIdx].id}"]`);
+      if (!el1||!el2||!elN) continue;
+
+      const r1 = el1.getBoundingClientRect();
+      const r2 = el2.getBoundingClientRect();
+      const rN = elN.getBoundingClientRect();
+      const base = container.getBoundingClientRect();
+
+      const x1 = r1.right - base.left + (container.closest('.bracket-outer')?.scrollLeft||0);
+      const y1 = r1.top + r1.height/2 - base.top;
+      const x2 = r2.right - base.left + (container.closest('.bracket-outer')?.scrollLeft||0);
+      const y2 = r2.top + r2.height/2 - base.top;
+      const xN = rN.left - base.left + (container.closest('.bracket-outer')?.scrollLeft||0);
+      const yN = rN.top + rN.height/2 - base.top;
+      const midX = (x1+xN)/2;
+
+      const line = (x1,y1,x2,y2) => {
+        const l = document.createElementNS('http://www.w3.org/2000/svg','line');
+        l.setAttribute('x1',x1); l.setAttribute('y1',y1);
+        l.setAttribute('x2',x2); l.setAttribute('y2',y2);
+        l.setAttribute('stroke',getComputedStyle(document.documentElement).getPropertyValue('--connector').trim()||'#f5a62388');
+        l.setAttribute('stroke-width','1.5');
+        svg.appendChild(l);
+      };
+
+      // horizontal from match 1
+      line(x1, y1, midX, y1);
+      // horizontal from match 2
+      line(x2, y2, midX, y2);
+      // vertical connector
+      line(midX, y1, midX, y2);
+      // horizontal to next match
+      line(midX, yN, xN, yN);
+    }
+  }
+}
+
+/* ── Add data-mid to match cards after render ── */
+function addMidAttrs(T, container) {
+  T.matches.forEach(m => {
+    const cards = container.querySelectorAll('.match-card');
+    // already injected via onclick attribute, add data-mid
+    cards.forEach(c => {
+      const onclick = c.getAttribute('onclick');
+      if (onclick && onclick.includes(m.id)) {
+        c.setAttribute('data-mid', m.id);
+      }
+    });
+  });
+}
+
+/* ── ROUND ROBIN RENDER ── */
+function renderRR(T, el) {
+  // Standings
+  const pts = {};
+  T.teams.forEach(t => pts[t.id]={...t,w:0,l:0,m:0,p:0});
+  T.matches.forEach(m => {
+    if (!m.done) return;
+    const t1=pts[m.t1?.id], t2=pts[m.t2?.id];
+    if(t1){t1.m++;}if(t2){t2.m++;}
+    if(m.s1>m.s2){if(t1){t1.w++;t1.p+=3;}if(t2)t2.l++;}
+    else if(m.s2>m.s1){if(t2){t2.w++;t2.p+=3;}if(t1)t1.l++;}
+    else{if(t1)t1.p++;if(t2)t2.p++;}
+  });
+  const sorted = Object.values(pts).sort((a,b)=>b.p-a.p||b.w-a.w);
+  const rounds = [...new Set(T.matches.map(m=>m.round))].sort((a,b)=>a-b);
+
+  let html = `<div style="overflow-x:auto;margin-bottom:28px">
+  <table style="width:100%;border-collapse:collapse;font-size:13px;min-width:500px">
+    <thead><tr style="background:#16191f">
+      <th style="padding:10px 14px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text2);border-bottom:1px solid var(--border-dim)">#</th>
+      <th style="padding:10px 14px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text2);border-bottom:1px solid var(--border-dim)">TIM</th>
+      <th style="padding:10px 14px;text-align:center;font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text2);border-bottom:1px solid var(--border-dim)">M</th>
+      <th style="padding:10px 14px;text-align:center;font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text2);border-bottom:1px solid var(--border-dim)">W</th>
+      <th style="padding:10px 14px;text-align:center;font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text2);border-bottom:1px solid var(--border-dim)">L</th>
+      <th style="padding:10px 14px;text-align:center;font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text2);border-bottom:1px solid var(--border-dim)">POIN</th>
+    </tr></thead>
+    <tbody>${sorted.map((t,i)=>`<tr style="border-bottom:1px solid var(--border-dim)">
+      <td style="padding:10px 14px;font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--acc)">${i+1}</td>
+      <td style="padding:10px 14px;font-weight:700">${t.name}${T.champion===t.name?' <span style="font-size:10px;color:var(--gold)">👑</span>':''}</td>
+      <td style="padding:10px 14px;text-align:center">${t.m}</td>
+      <td style="padding:10px 14px;text-align:center;color:#22c55e">${t.w}</td>
+      <td style="padding:10px 14px;text-align:center;color:#e03030">${t.l}</td>
+      <td style="padding:10px 14px;text-align:center;font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--gold)">${t.p}</td>
+    </tr>`).join('')}</tbody>
+  </table></div>
+
+  <div class="sec-ttl" style="margin-bottom:14px">JADWAL MATCH</div>`;
+
+  for (const r of rounds) {
+    const rMs = T.matches.filter(m=>m.round===r);
+    html += `<div style="margin-bottom:20px">
+      <div style="font-size:10px;text-transform:uppercase;letter-spacing:2px;color:var(--text2);font-weight:700;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border-dim)">RONDE ${r}</div>
+      <div style="display:flex;flex-wrap:wrap;gap:10px">`;
+    for (const m of rMs) {
+      html += `<div style="width:220px">${matchCard(m)}</div>`;
+    }
+    html += `</div></div>`;
+  }
+  el.innerHTML = html;
+
+  // Add data-mid attrs
+  setTimeout(() => { T.matches.forEach(m => {
+    const allCards = el.querySelectorAll('.match-card');
+    allCards.forEach(c => {
+      const oc = c.getAttribute('onclick');
+      if (oc && oc.includes(m.id)) c.setAttribute('data-mid', m.id);
+    });
+  }); }, 10);
+}
+
+/* ════════════════════════════════════
+   MATCH MODAL
+════════════════════════════════════ */
+function openMModal(mid) {
+  const T = getCur();
+  if (!T) return;
+  const m = T.matches.find(x=>x.id===mid);
+  if (!m) return;
+  if (!m.t1||!m.t2) { toast('⏳ Match belum siap!'); return; }
+  editMid = mid;
+  document.getElementById('mt1-name').textContent = m.t1.name;
+  document.getElementById('mt2-name').textContent = m.t2.name;
+  document.getElementById('ms1').value = m.s1!==null?m.s1:0;
+  document.getElementById('ms2').value = m.s2!==null?m.s2:0;
+  document.getElementById('match-modal').classList.add('open');
+}
+
+function closeModal() { document.getElementById('match-modal').classList.remove('open'); editMid=null; }
+
+function saveMatch() {
+  const T=getCur(); if(!T||!editMid) return;
+  const m=T.matches.find(x=>x.id===editMid); if(!m) return;
+  const s1=parseInt(document.getElementById('ms1').value)||0;
+  const s2=parseInt(document.getElementById('ms2').value)||0;
+  if(s1===s2){toast('⚠️ Tidak boleh seri!','warn');return;}
+  m.s1=s1; m.s2=s2; m.done=true;
+  m.win = s1>s2 ? m.t1.id : m.t2.id;
+  const winner = s1>s2 ? m.t1 : m.t2;
+  if (T.fmt==='single' && S.prefs.auto) advanceSingle(T, m, winner);
+  checkChamp(T);
+  sv(); closeModal(); toast('✅ Hasil disimpan!');
+  renderBk();
+}
+
+function advanceSingle(T, done, winner) {
+  const nr = done.round+1;
+  const sameRound = T.matches.filter(m=>m.round===done.round&&m.type==='W');
+  const idx = sameRound.findIndex(m=>m.id===done.id);
+  const nms = T.matches.filter(m=>m.round===nr&&m.type==='W');
+  const nIdx = Math.floor(idx/2);
+  const slot = idx%2===0?'t1':'t2';
+  if (nms[nIdx]) nms[nIdx][slot]=winner;
+}
+
+function checkChamp(T) {
+  if (T.fmt==='single') {
+    const maxR = Math.max(...T.matches.map(m=>m.round));
+    const fin = T.matches.find(m=>m.round===maxR);
+    if (fin&&fin.done) { T.champion=(fin.s1>fin.s2?fin.t1:fin.t2).name; T.status='done'; }
+  } else if (T.fmt==='roundrobin') {
+    if (T.matches.every(m=>m.done)) {
+      const pts={};
+      T.teams.forEach(t=>pts[t.id]=0);
+      T.matches.forEach(m=>{
+        if(m.s1>m.s2)pts[m.t1.id]=(pts[m.t1.id]||0)+3;
+        else if(m.s2>m.s1)pts[m.t2.id]=(pts[m.t2.id]||0)+3;
+        else{pts[m.t1.id]=(pts[m.t1.id]||0)+1;pts[m.t2.id]=(pts[m.t2.id]||0)+1;}
+      });
+      const cid=Object.entries(pts).sort((a,b)=>b[1]-a[1])[0][0];
+      T.champion=T.teams.find(t=>t.id===cid)?.name||'';
+      T.status='done';
+    }
+  }
+}
+
+/* ════════════════════════════════════
+   TOURNAMENT ACTIONS
+════════════════════════════════════ */
+function randomizeCurrent() {
+  const T=getCur(); if(!T) return;
+  if(S.prefs.confirm&&!confirm('Acak ulang bracket? Semua hasil akan direset.'))return;
+  T.teams=shuffle(T.teams);
+  if(T.fmt==='single') T.matches=mkSingle(T.teams,T.id);
+  else if(T.fmt==='double') T.matches=mkDouble(T.teams,T.id);
+  else T.matches=mkRR(T.teams,T.id);
+  T.champion=null;T.status='active';sv();renderBk();toast('🔀 Bracket diacak!');
+}
+
+function resetCurrent() {
+  const T=getCur(); if(!T) return;
+  if(S.prefs.confirm&&!confirm('Reset semua skor?'))return;
+  if(T.fmt==='single') T.matches=mkSingle(T.teams,T.id);
+  else if(T.fmt==='double') T.matches=mkDouble(T.teams,T.id);
+  else T.matches=mkRR(T.teams,T.id);
+  T.champion=null;T.status='active';sv();renderBk();toast('↺ Bracket direset!');
+}
+
+function deleteCurrent() {
+  const T=getCur(); if(!T) return;
+  if(S.prefs.confirm&&!confirm(`Hapus "${T.name}"?`))return;
+  S.tours=S.tours.filter(t=>t.id!==T.id);S.curId=null;sv();goPage('dashboard');toast('🗑 Tournament dihapus');
+}
+
+/* ════════════════════════════════════
+   LAYOUT
+════════════════════════════════════ */
+function initLayout() {
+  document.getElementById('brnd-name').value=S.appName||'FF BRACKET';
+  document.getElementById('brnd-tag').value=S.tag||'KNOCKOUT STAGE';
+  document.getElementById('cc-in').value=S.acc||'#f5a623';
+  document.querySelectorAll('.cp').forEach(p=>p.classList.toggle('on',p.dataset.c===S.acc));
+  ['confirm','auto'].forEach(k=>{
+    const el=document.getElementById('tgl-'+k);
+    if(el)el.classList.toggle('on',S.prefs[k]!==false);
+  });
+}
+
+function setAcc(c, el) {
+  S.acc=c;
+  document.querySelectorAll('.cp').forEach(p=>p.classList.remove('on'));
+  if(el)el.classList.add('on');
+  document.getElementById('cc-in').value=c;
+  applyAcc();sv();toast('🎨 Warna diubah!');
+}
+
+function applyAcc() {
+  document.documentElement.style.setProperty('--gold', S.acc||'#f5a623');
+  document.documentElement.style.setProperty('--connector', (S.acc||'#f5a623')+'88');
+  document.documentElement.style.setProperty('--border-glow', (S.acc||'#f5a623')+'55');
+  document.documentElement.style.setProperty('--win-glow', (S.acc||'#f5a623')+'22');
+}
+
+function applyBrand() {
+  const n=S.appName||'FF BRACKET';
+  const parts=n.split(' ');
+  document.getElementById('app-logo-txt').innerHTML=parts.length>1?`${parts[0]} <span>${parts.slice(1).join(' ')}</span>`:n;
+}
+
+function saveBrand() {
+  S.appName=document.getElementById('brnd-name').value||'FF BRACKET';
+  S.tag=document.getElementById('brnd-tag').value||'KNOCKOUT STAGE';
+  applyBrand();sv();toast('✅ Branding disimpan!');
+}
+
+function tglP(k,el) { S.prefs[k]=!S.prefs[k]; el.classList.toggle('on',S.prefs[k]); sv(); }
+
+/* ════════════════════════════════════
+   DATA
+════════════════════════════════════ */
+function exportD() {
+  const b=new Blob([JSON.stringify(S,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='ffbracket.json';a.click();toast('📤 Exported!');
+}
+function importD(e) {
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();r.onload=ev=>{try{S={...S,...JSON.parse(ev.target.result)};applyAcc();applyBrand();sv();renderDash();toast('📥 Imported!');}catch{toast('❌ File invalid!','err');}};
+  r.readAsText(f);
+}
+function clearAll() {
+  if(!confirm('Hapus SEMUA data?'))return;
+  S.tours=[];S.curId=null;sv();goPage('dashboard');toast('🗑 Data dihapus');
+}
+
+/* ════════════════════════════════════
+   UTILS
+════════════════════════════════════ */
+function shuffle(a) {
+  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+  return a;
+}
+
+function toast(msg, type) {
+  const el=document.getElementById('toast-el');
+  el.textContent=msg;
+  el.style.borderLeftColor=type==='err'?'#e03030':type==='warn'?'#f5a623':'#22c55e';
+  el.classList.add('show');
+  clearTimeout(el._t);
+  el._t=setTimeout(()=>el.classList.remove('show'),2500);
+}
+
+// Close modal on bg click
+document.getElementById('match-modal').addEventListener('click',function(e){if(e.target===this)closeModal();});
+
+// Init
+ld();
+renderDash();
+</script>
+</body>
+</html>
