@@ -1,0 +1,142 @@
+/* =====================================================
+   GLOBALS.CSS — Medieval Anime Theme
+   Block League Bracket
+   ===================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap');
+
+:root {
+  /* ── Medieval Anime Palette ── */
+  --gold-bright:    #e8c84a;
+  --gold-mid:       #c9a030;
+  --gold-dim:       #8a6a18;
+  --gold-shadow:    #5c4410;
+  --gold-glow:      rgba(220, 180, 60, 0.4);
+
+  --crimson-deep:   #5a0e0e;
+  --crimson-mid:    #8c1f1f;
+  --crimson-light:  #c45050;
+
+  --parchment-bright: #f0e4c2;
+  --parchment-mid:    #c8b99a;
+  --parchment-dim:    #9a876a;
+
+  --bg-deep:        #0d0804;
+  --bg-mid:         #160e06;
+  --bg-panel:       #1e1208;
+  --bg-panel-light: #261808;
+  --shadow-deep:    #07040200;
+
+  --card-bg:        rgba(28, 16, 6, 0.9);
+  --card-bg-active: rgba(38, 24, 8, 0.95);
+
+  /* ── Typography ── */
+  --font-display: 'Cinzel', 'Times New Roman', serif;
+  --font-body:    'Crimson Text', 'Georgia', serif;
+  --font-ui:      'Crimson Text', 'Georgia', serif;
+
+  /* Legacy compatibility with other files */
+  --accent-1:          var(--gold-bright);
+  --accent-2:          var(--gold-mid);
+  --accent-glow:       var(--gold-glow);
+  --text-light:        var(--parchment-bright);
+  --text-dim:          var(--parchment-dim);
+  --text-faint:        var(--gold-shadow);
+  --slot-empty-bg:     var(--bg-panel);
+  --slot-border:       var(--gold-shadow);
+  --logo-placeholder:  var(--parchment-mid);
+  --danger:            #c94040;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  padding: 0;
+  margin: 0;
+  background: var(--bg-deep);
+  color: var(--parchment-bright);
+  font-family: var(--font-body);
+  font-size: 16px;
+}
+
+/* Medieval parchment & dust background */
+body {
+  background-color: var(--bg-deep);
+  background-image:
+    /* Diagonal hatching — aged parchment texture */
+    repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 28px,
+      rgba(180, 130, 40, 0.025) 28px,
+      rgba(180, 130, 40, 0.025) 29px
+    ),
+    repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 28px,
+      rgba(180, 130, 40, 0.02) 28px,
+      rgba(180, 130, 40, 0.02) 29px
+    ),
+    /* Vignette edges */
+    radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.65) 100%);
+  min-height: 100vh;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font-family: inherit;
+}
+
+input, select {
+  font-family: var(--font-body);
+  background: var(--bg-panel-light);
+  border: 1px solid var(--gold-shadow);
+  color: var(--parchment-bright);
+  border-radius: 2px;
+  padding: 8px 10px;
+  font-size: 15px;
+}
+
+input:focus, select:focus, button:focus-visible {
+  outline: 2px solid var(--gold-mid);
+  outline-offset: 1px;
+}
+
+/* ── Utility buttons ── */
+.btn {
+  font-family: var(--font-body);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  border: none;
+  border-radius: 2px;
+  padding: 10px 20px;
+  cursor: pointer;
+  background: linear-gradient(135deg, var(--gold-shadow), var(--gold-mid));
+  color: var(--bg-deep);
+  transition: filter 0.15s ease, opacity 0.15s ease;
+  font-size: 15px;
+}
+.btn:hover {
+  filter: brightness(1.12);
+}
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.btn-outline {
+  background: transparent;
+  border: 1px solid var(--gold-mid);
+  color: var(--gold-bright);
+}
+.btn-danger {
+  background: transparent;
+  border: 1px solid var(--danger);
+  color: var(--danger);
+}

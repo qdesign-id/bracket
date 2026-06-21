@@ -1,0 +1,61 @@
+.bracketContainer {
+  position: relative;
+  overflow-x: auto;
+  padding: 24px 24px 56px;
+}
+
+.connectorSvg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.connectorPath {
+  fill: none;
+  stroke: var(--accent-1);
+  stroke-width: 2;
+  opacity: 0.75;
+  filter: drop-shadow(0 0 3px var(--accent-glow));
+}
+
+.roundsRow {
+  display: flex;
+  gap: 56px;
+  position: relative;
+  z-index: 1;
+  width: max-content;
+}
+
+.round {
+  display: flex;
+  flex-direction: column;
+  width: 220px;
+  flex-shrink: 0;
+}
+
+.roundLabel {
+  text-align: center;
+  font-family: var(--font-display);
+  letter-spacing: 0.1em;
+  color: var(--text-light);
+  font-size: 13px;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--accent-1);
+}
+
+.roundMatches {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  gap: 14px;
+  min-height: 480px;
+}
+
+.matchSlot {
+  display: flex;
+  flex-direction: column;
+}

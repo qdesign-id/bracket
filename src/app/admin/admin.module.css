@@ -1,0 +1,148 @@
+.main {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 24px 20px 80px;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.brand {
+  font-family: var(--font-display);
+  font-size: 20px;
+  color: var(--accent-1);
+  margin: 0;
+}
+
+.errorBanner {
+  background: rgba(255, 92, 92, 0.12);
+  border: 1px solid var(--danger);
+  color: var(--danger);
+  padding: 10px 14px;
+  border-radius: 4px;
+  margin-bottom: 16px;
+  font-size: 13px;
+}
+
+.panel {
+  background: var(--bg-panel);
+  border: 1px solid var(--slot-border);
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 24px;
+}
+
+.panelTitle {
+  font-family: var(--font-display);
+  font-size: 16px;
+  margin: 0 0 14px;
+  color: var(--text-light);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.activeBadge {
+  font-size: 10px;
+  background: var(--accent-1);
+  color: #06231a;
+  padding: 3px 8px;
+  border-radius: 3px;
+  letter-spacing: 0.05em;
+}
+
+.hint {
+  font-size: 13px;
+  color: var(--text-dim);
+  margin: 0 0 14px;
+}
+
+.switcherRow {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.select {
+  flex: 1;
+  min-width: 220px;
+}
+
+.createForm {
+  border-top: 1px solid var(--slot-border);
+  padding-top: 16px;
+}
+
+.subTitle {
+  font-size: 14px;
+  color: var(--text-dim);
+  margin: 0 0 12px;
+  font-weight: 600;
+}
+
+.formRow {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  margin-bottom: 14px;
+}
+
+.formRow label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-dim);
+  font-weight: 600;
+}
+
+.teamGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 10px;
+}
+
+.teamRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--bg-panel-light);
+  border: 1px solid var(--slot-border);
+  border-radius: 6px;
+  padding: 8px;
+}
+
+.logoUpload {
+  width: 36px;
+  height: 36px;
+  border-radius: 4px;
+  background: var(--logo-placeholder);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.logoPreview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.logoPlaceholder {
+  color: var(--bg-deep);
+  font-weight: 700;
+}
+
+.teamNameInput {
+  flex: 1;
+  min-width: 0;
+}
