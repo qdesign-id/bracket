@@ -1,7 +1,7 @@
 // Pure helper functions for building and reading single-elimination bracket data.
 // No Supabase calls in here, so it's easy to reason about / unit test separately.
 
-export const ALLOWED_TEAM_COUNTS = [8, 16, 32];
+export const ALLOWED_TEAM_COUNTS = [4, 8, 16, 32];
 
 // Returns e.g. for 16 teams: [{round:0, matchCount:8, label:"1/8"}, {round:1, matchCount:4, label:"1/4"}, {round:2, matchCount:2, label:"1/2"}, {round:3, matchCount:1, label:"FINAL"}]
 export function getRoundPlan(numTeams) {
