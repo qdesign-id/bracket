@@ -17,7 +17,7 @@ import {
 import BracketView from "@/components/BracketView";
 import styles from "./admin.module.css";
 
-const TEAM_COUNT_OPTIONS = [8, 16, 32];
+const TEAM_COUNT_OPTIONS = [4, 8, 16, 32];
 
 export default function AdminDashboardPage() {
   const router = useRouter();
